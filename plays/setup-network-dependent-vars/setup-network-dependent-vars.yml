@@ -1,0 +1,21 @@
+---
+- name: Set up Mainnet vars
+  when: network == ""
+  set_fact:
+    public_rpc_port: 18089
+    p2p_port: 18080
+    ports_to_close: [28080, 28089, 38080, 38089]
+  
+- name: Set up Stagenet vars
+  when: network == "--stagenet"
+  set_fact:
+    public_rpc_port: 38089
+    p2p_port: 38080
+    ports_to_close: [18080, 18089, 28080, 28089]
+
+- name: Set up Testnet vars
+  when: network == "--testnet"
+  set_fact:
+    public_rpc_port: 28089
+    p2p_port: 28080
+    ports_to_close: [18080, 18089, 38080, 38089]

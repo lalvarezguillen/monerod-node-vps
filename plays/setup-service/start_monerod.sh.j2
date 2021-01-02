@@ -1,0 +1,25 @@
+#! /bin/bash
+
+{{ monerod_path }} \
+{% if network %}
+    {{ network }} \
+{% endif %}
+{% if pruned %}
+    --prune-blockchain \
+{% endif %}
+{% if ban_list %}
+    --ban-list={{ result_ban_list['dest'] }} \
+{% endif %}
+{% if enable_dns_blocklist %}
+    --enable-dns-blocklist \
+{% endif %}
+{% if public_rpc_port %}
+    --public-node \
+    --rpc-restricted-bind-port={{ public_rpc_port }} \
+    --rpc-restricted-bind-ip=0.0.0.0 \
+    --rpc-restricted-bind-ipv6-address=:: \
+{% endif %}
+    --sync-pruned-blocks \
+    --data-dir={{ data_dir }} \
+    --non-interactive \
+    

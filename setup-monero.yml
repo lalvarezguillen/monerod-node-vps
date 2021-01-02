@@ -1,5 +1,21 @@
 ---
 - name: Setup monerod
   hosts: 127.0.0.1
+  vars:
+    - monero_dir: /home/luis/Code/ansible_tests/monero
+    - monerod_path: "{{ monero_dir }}/monerod"
+    - data_dir: "{{ monero_dir }}/data"
+    - network: "--testnet"
   tasks:
-    - include: download-monero.yml
+    - name: Ensure monero directories exist
+      block: 
+        - file:
+            path: "{{ monero_dir }}"
+            state: directory
+        - file:
+            path: "{{ data_dir }}"
+            state: directory
+    - include: ./plays/setup-network-dependent-vars/setup-network-dependent-vars.yml
+    - include: ./plays/set-up-firewall/set-up-firewall.yml
+    # - include: ./plays/download-monero/download-monero.yml
+    # - include: ./plays/setup-service/setup-service.yml
