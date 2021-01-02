@@ -17,5 +17,5 @@
             state: directory
     - include: ./plays/setup-network-dependent-vars/setup-network-dependent-vars.yml
     - include: ./plays/set-up-firewall/set-up-firewall.yml
-    # - include: ./plays/download-monero/download-monero.yml
-    # - include: ./plays/setup-service/setup-service.yml
+    - include: ./plays/download-monero/download-monero.yml
+    - include: ./plays/setup-service/setup-service.yml
