@@ -21,21 +21,28 @@
       when: "not result_exists.stat.exists or desired_monero_version not in result_version.stdout"
       block:
         - name: download monerod
+          become: True
           get_url:
             url: "{{ monero_download_url }}"
             dest: "{{ monero_dir }}"
             checksum: "{{ monero_download_checksum }}"
+            group: "{{ monerod_user }}"
+            owner: "{{ monerod_user }}"
+            mode: "777"
           register: result_download
         - name: extract monerod
-          # # Did not manage to get unarchive to work, sadly.
-          # unarchive:
-          #   src: "{{ result_downloaded.dest }}"
-          #   dest: "{{ monero_dir }}"
-          #   copy: no
-          #   extra_opts:
-          #     - -xf
-          command: tar -xf {{ result_download.dest }} -C {{ monero_dir }} --strip-components=1
+          become: True
+          unarchive:
+            src: "{{ result_download.dest }}"
+            dest: "{{ monero_dir }}"
+            group: "{{ monerod_user }}"
+            owner: "{{ monerod_user }}"
+            mode: "777"
+            copy: no
+            extra_opts:
+              - "--strip-components=1"
         - name: cleanup downloaded artifact
+          become: True
           file:
             path: "{{ result_download.dest }}"
             state: absent
