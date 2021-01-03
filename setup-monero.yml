@@ -2,9 +2,6 @@
 - name: Setup monerod
   hosts: 127.0.0.1
   vars:
-    - monero_dir: /home/luis/Code/ansible_tests/monero
-    - monerod_path: "{{ monero_dir }}/monerod"
-    - data_dir: "{{ monero_dir }}/data"
     - network: "--testnet"
     - monerod_user: monero
   tasks:
@@ -12,25 +9,17 @@
       become: True
       user:
         name: "{{ monerod_user }}"
-        system: True
-        create_home: False
-    - name: Ensure monero directories exist
+      register: result_user_creation
+    - name: Ensure blockchain dir exists
       become: True
-      block: 
-        - file:
-            path: "{{ monero_dir }}"
-            state: directory
-            owner: "{{ monerod_user }}"
-            group: "{{ monerod_user }}"
-            mode: "777"
-            recurse: True
-        - file:
-            path: "{{ data_dir }}"
-            state: directory
-            owner: "{{ monerod_user }}"
-            group: "{{ monerod_user }}"
-            mode: "777"
-            recurse: True
+      file:
+        path: "{{ result_user_creation.home }}/blockchain"
+        state: directory
+        owner: "{{ monerod_user }}"
+        group: "{{ monerod_user }}"
+        mode: "774"
+        recurse: True
+      register: result_create_blockchains_dir
     - include: ./plays/setup-network-dependent-vars/setup-network-dependent-vars.yml
     - include: ./plays/set-up-firewall/set-up-firewall.yml
     - include: ./plays/download-monero/download-monero.yml

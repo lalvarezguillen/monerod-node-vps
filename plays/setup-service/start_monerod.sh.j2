@@ -1,6 +1,6 @@
 #! /bin/bash
 
-{{ monerod_path }} \
+{{ result_user_creation.home }}/monerod \
 {% if network %}
     {{ network }} \
 {% endif %}
@@ -20,6 +20,6 @@
     --rpc-restricted-bind-ipv6-address=:: \
 {% endif %}
     --sync-pruned-blocks \
-    --data-dir={{ data_dir }} \
+    --data-dir={{ result_create_blockchains_dir.path }} \
     --non-interactive \
     

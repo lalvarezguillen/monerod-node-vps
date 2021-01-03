@@ -12,7 +12,7 @@
     - name: create init script
       template:
         src: ./start_monerod.sh.j2
-        dest: "{{ monero_dir }}/start_monerod.sh"
+        dest: "{{ result_user_creation.home }}/start_monerod.sh"
         group: "{{ monerod_user }}"
         owner: "{{ monerod_user }}"
         mode: "775"
@@ -25,13 +25,14 @@
       when: "ban_list"
       get_url:
         url: ban_list
-        dest: "{{ monero_dir }}/ban_list.txt"
+        dest: "{{ result_user_creation.home }}/ban_list.txt"
         group: "{{ monerod_user }}"
         owner: "{{ monerod_user }}"
         mode: "774"
       register: result_ban_list
-    - name: Start service httpd, if not started
-      service:
+    - name: Restart service monerod
+      systemd:
         name: monerod
         state: restarted
         enabled: True
+        daemon_reload: True

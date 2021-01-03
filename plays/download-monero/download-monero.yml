@@ -7,11 +7,11 @@
   block:
     - name: check monerod exists
       stat:
-        path: "{{ monerod_path }}"
+        path: "{{ result_user_creation.home }}/monerod"
       register: result_exists
 
     - name: check monerod version
-      command: "{{ monerod_path }} --version"
+      command: "{{ result_user_creation.home }}/monerod --version"
       register: result_version
       when: "result_exists.stat.exists"
       changed_when: False
@@ -21,28 +21,23 @@
       when: "not result_exists.stat.exists or desired_monero_version not in result_version.stdout"
       block:
         - name: download monerod
-          become: True
           get_url:
             url: "{{ monero_download_url }}"
-            dest: "{{ monero_dir }}"
+            dest: "/tmp"
             checksum: "{{ monero_download_checksum }}"
-            group: "{{ monerod_user }}"
-            owner: "{{ monerod_user }}"
-            mode: "777"
           register: result_download
         - name: extract monerod
           become: True
           unarchive:
             src: "{{ result_download.dest }}"
-            dest: "{{ monero_dir }}"
+            dest: "{{ result_user_creation.home }}"
             group: "{{ monerod_user }}"
             owner: "{{ monerod_user }}"
-            mode: "777"
+            mode: "775"
             copy: no
             extra_opts:
               - "--strip-components=1"
         - name: cleanup downloaded artifact
-          become: True
           file:
             path: "{{ result_download.dest }}"
             state: absent
