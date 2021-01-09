@@ -1,3 +1,5 @@
 hetzner_region: fsn1
-hetzer_server_type: cx11
+hetzner_server_type: cx11
 hetzner_image: ubuntu-20.04
+hetzner_volume_gb_size: 50
+hetzner_volume_mountpoint: /mnt/monero

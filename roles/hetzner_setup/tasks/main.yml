@@ -21,6 +21,23 @@
 
 - name: Register the ip address or the servers created
   add_host:
-    hostname: '{{ hostvars[item].inventory_hostname }}'
-    ansible_host: '{{ hostvars[item].result_create_vps.hcloud_server.ipv4_address }}'
-  with_items: "{{ ansible_play_hosts }}"
+    hostname: "{{ inventory_hostname_short }}"
+    ansible_host: '{{ result_create_vps.hcloud_server.ipv4_address }}'
+
+- name: Attach a volume to hold the blockchain data
+  local_action:
+    module: hetzner.hcloud.hcloud_volume
+    api_token: "{{ hetzner_api_key }}"
+    name: "{{ inventory_hostname_short }}"
+    server: "{{ result_create_vps.hcloud_server.name }}"
+    state: present
+    size: "{{ hetzner_volume_gb_size | int }}"
+  register: result_attach_volume
+
+- name: Format and mount the volume
+  mount:
+    src: "{{ result_attach_volume.hcloud_volume.linux_device }}"
+    state: mounted
+    fstype: ext4
+    path: "{{ hetzner_volume_mountpoint }}"
+    opts: 'discard,nofail,defaults'

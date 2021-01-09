@@ -1,11 +1,11 @@
 --- 
 - name: check that monerod exists
   stat:
-    path: "{{ result_user_creation.home }}/monerod"
+    path: "{{ monero_user_home }}/monerod"
   register: result_exists
 
 - name: check monerod version
-  command: "{{ result_user_creation.home }}/monerod --version"
+  command: "{{ monero_user_home }}/monerod --version"
   register: result_version
   when: "result_exists.stat.exists"
   changed_when: False
@@ -21,10 +21,10 @@
         checksum: "{{ monero_download_checksum }}"
       register: result_download
     - name: extract monerod
-      become: True
+      # become: True
       unarchive:
         src: "{{ result_download.dest }}"
-        dest: "{{ result_user_creation.home }}"
+        dest: "{{ monero_user_home }}"
         group: "{{ monero_user_name }}"
         owner: "{{ monero_user_name }}"
         mode: "775"
@@ -35,3 +35,14 @@
       file:
         path: "{{ result_download.dest }}"
         state: absent
+
+- name: Ensure blockchain dir exists
+  # become: True
+  file:
+    path: "{{ monero_volume_mountpoint }}/blockchain"
+    state: directory
+    owner: "{{ monero_user_name }}"
+    group: "{{ monero_user_name }}"
+    mode: "774"
+    recurse: True
+  register: result_create_blockchains_dir

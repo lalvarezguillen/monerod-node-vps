@@ -1,33 +1,33 @@
 ---
 - name: create init script
-  become: True
+  # become: True
   template:
     src: start_monerod.sh.j2
-    dest: "{{ result_user_creation.home }}/start_monerod.sh"
+    dest: "{{ monero_volume_mountpoint }}/start_monerod.sh"
     group: "{{ monero_user_name }}"
     owner: "{{ monero_user_name }}"
     mode: "775"
   register: result_init_script
 
 - name: create service file
-  become: True
+  # become: True
   template:
     src: monerod.service.j2
     dest: "{{ services_dir }}/monerod.service"
 
 - name: create ban list
-  become: True
+  # become: True
   when: "ban_list"
   get_url:
     url: ban_list
-    dest: "{{ result_user_creation.home }}/ban_list.txt"
+    dest: "{{ monero_volume_mountpointe }}/ban_list.txt"
     group: "{{ monero_user_name }}"
     owner: "{{ monero_user_name }}"
     mode: "774"
   register: result_ban_list
 
 - name: Restart service monerod
-  become: True
+  # become: True
   systemd:
     name: monerod
     state: restarted

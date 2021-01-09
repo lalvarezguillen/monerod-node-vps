@@ -1,8 +1,8 @@
 #! /bin/bash
 
 {{ result_user_creation.home }}/monerod \
-{% if network %}
-    {{ network }} \
+{% if network_flag %}
+    {{ network_flag }} \
 {% endif %}
 {% if pruned %}
     --prune-blockchain \
