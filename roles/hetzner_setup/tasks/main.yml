@@ -1,0 +1,26 @@
+- name: Create SSH keys
+  local_action:
+    module: hetzner.hcloud.hcloud_ssh_key
+    api_token: "{{ hetzner_api_key }}"
+    name: "{{ public_ssh_key_name }}"
+    public_key: "{{ public_ssh_key }}"
+    state: present
+
+- name: Create VPS
+  local_action:
+    module: hetzner.hcloud.hcloud_server
+    api_token: "{{ hetzner_api_key }}"
+    name: "{{ inventory_hostname_short }}"
+    location: "{{ hetzner_region }}"
+    server_type: "{{ hetzner_server_type }}"
+    image: "{{ hetzner_image }}"
+    ssh_keys:
+      - "{{ public_ssh_key_name }}"
+    state: started
+  register: result_create_vps
+
+- name: Register the ip address or the servers created
+  add_host:
+    hostname: '{{ hostvars[item].inventory_hostname }}'
+    ansible_host: '{{ hostvars[item].result_create_vps.hcloud_server.ipv4_address }}'
+  with_items: "{{ ansible_play_hosts }}"

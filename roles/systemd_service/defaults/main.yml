@@ -1,0 +1,6 @@
+pruned: True
+ban_list: ""
+enable_dns_blocklist: ""
+services_dir: "/etc/systemd/system"
+memory_high: "1024M"
+memory_max: "1536M"

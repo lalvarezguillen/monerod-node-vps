@@ -1,0 +1,38 @@
+---
+- name: Allow SSH traffic
+  become: True
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: Allow p2p traffic for the selected Monero network
+  become: True
+  ufw:
+    rule: allow
+    port: "{{ p2p_port | int}}"
+    proto: tcp
+
+- name: Allow restricted RPC traffic for the selected Monero network
+  become: True
+  ufw:
+    rule: allow
+    port: "{{ public_rpc_port | int}}"
+    proto: tcp
+
+# ufw manages its own state, so we need to delete rules that we might
+# have created before, for different Monero networks.
+# See ufw docs for context
+- name: Delete rules that allow traffic for other Monero networks
+  become: True
+  ufw:
+    rule: allow
+    port: "{{ item | int }}"
+    proto: tcp
+    delete: True
+  loop: "{{ ports_to_close | list}}"
+
+- name: Enable Firewall. Reject all traffic by default
+  become: True
+  ufw:
+    state: enabled
+    policy: reject

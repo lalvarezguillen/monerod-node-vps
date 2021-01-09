@@ -3,24 +3,10 @@
   hosts: 127.0.0.1
   vars:
     - network: "--testnet"
-    - monerod_user: monero
-  tasks:
-    - name: Ensure monerod_user exists
-      become: True
-      user:
-        name: "{{ monerod_user }}"
-      register: result_user_creation
-    - name: Ensure blockchain dir exists
-      become: True
-      file:
-        path: "{{ result_user_creation.home }}/blockchain"
-        state: directory
-        owner: "{{ monerod_user }}"
-        group: "{{ monerod_user }}"
-        mode: "774"
-        recurse: True
-      register: result_create_blockchains_dir
-    - include: ./plays/setup-network-dependent-vars/setup-network-dependent-vars.yml
-    - include: ./plays/set-up-firewall/set-up-firewall.yml
-    - include: ./plays/download-monero/download-monero.yml
-    - include: ./plays/setup-service/setup-service.yml
+    - monero_user_name: monero
+  roles:
+    - monero_user
+    - network_dependent_vars
+    - firewall
+    - monerod_download
+    - systemd_service

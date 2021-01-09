@@ -1,0 +1,17 @@
+---
+- name: Ensure monero_user_name exists
+  become: True
+  user:
+    name: "{{ monero_user_name }}"
+  register: result_user_creation
+
+- name: Ensure blockchain dir exists
+  become: True
+  file:
+    path: "{{ result_user_creation.home }}/blockchain"
+    state: directory
+    owner: "{{ monero_user_name }}"
+    group: "{{ monero_user_name }}"
+    mode: "774"
+    recurse: True
+  register: result_create_blockchains_dir
