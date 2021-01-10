@@ -19,7 +19,19 @@
     --rpc-restricted-bind-ip=0.0.0.0 \
     --rpc-restricted-bind-ipv6-address=:: \
 {% endif %}
+{% if limit_rate_up %}
+    --limit-rate-up={{ limit_rate_up }} \
+{% endif %}
+{% if limit_rate_down %}
+    --limit-rate-down={{ limit_rate_down }} \
+{% endif %}
+{% if out_peers %}
+    --out-peers={{ out_peers }} \
+{% endif %}
+{% if in_peers %}
+    --in-peers={{ in_peers }} \
+{% endif %}
     --sync-pruned-blocks \
     --data-dir={{ result_create_blockchains_dir.path }} \
-    --non-interactive \
+    --non-interactive
     

@@ -23,6 +23,7 @@
   add_host:
     hostname: "{{ inventory_hostname_short }}"
     ansible_host: '{{ result_create_vps.hcloud_server.ipv4_address }}'
+  changed_when: False  # Otherwise this always reports "changed"
 
 - name: Attach a volume to hold the blockchain data
   local_action:
@@ -34,7 +35,14 @@
     size: "{{ hetzner_volume_gb_size | int }}"
   register: result_attach_volume
 
-- name: Format and mount the volume
+- name: Format and resize the volume if necessary
+  community.general.filesystem:
+    fstype: ext4
+    dev: "{{ result_attach_volume.hcloud_volume.linux_device }}"
+    state: present
+    resizefs: True
+
+- name: Mount the volume
   mount:
     src: "{{ result_attach_volume.hcloud_volume.linux_device }}"
     state: mounted

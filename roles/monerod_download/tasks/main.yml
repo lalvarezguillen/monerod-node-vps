@@ -12,7 +12,7 @@
   failed_when: False
 
 - name: update monerod if necessary
-  when: "not result_exists.stat.exists or desired_monero_version not in result_version.stdout"
+  when: "not result_exists.stat.exists or monero_desired_version not in result_version.stdout"
   block:
     - name: download monerod
       get_url:
@@ -21,7 +21,6 @@
         checksum: "{{ monero_download_checksum }}"
       register: result_download
     - name: extract monerod
-      # become: True
       unarchive:
         src: "{{ result_download.dest }}"
         dest: "{{ monero_user_home }}"
@@ -37,7 +36,6 @@
         state: absent
 
 - name: Ensure blockchain dir exists
-  # become: True
   file:
     path: "{{ monero_volume_mountpoint }}/blockchain"
     state: directory

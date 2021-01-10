@@ -1,5 +1,6 @@
-desired_monero_version: '0.17.1.9'
-monero_download_url: https://downloads.getmonero.org/cli/linux64
-monero_download_checksum: sha256:0fb6f53b7b9b3b205151c652b6c9ca7e735f80bfe78427d1061f042723ee6381
+monero_desired_version: "{{ lookup('env', 'MONERO_DESIRED_VERSION') | default('v0.17.1.9', True) }}"
+monero_download_url: "{{ lookup('env', 'MONERO_DOWNLOAD_URL') | default('https://downloads.getmonero.org/cli/linux64', True) }}"
+monero_download_checksum: "{{ lookup('env', 'MONERO_DOWNLOAD_CHECKSUM') | default('sha256:0fb6f53b7b9b3b205151c652b6c9ca7e735f80bfe78427d1061f042723ee6381', True) }}"
+
 monero_volume_mountpoint: /mnt/monero
 monero_user_home: /home/monero
