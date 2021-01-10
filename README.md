@@ -1,10 +1,10 @@
-### Creates a public monero node on a VPS
+### Creates a public Monero node on a VPS
 
 The purpose of this project is to simplify the creation and maintenance
 of **public** Monero nodes on virtual private servers. Where maintenance
 involves the following tasks:
 
-* Upgrading monero version.
+* Upgrading Monero version.
 * Enabling, disabling and updating flags passed to `monerod`.
 * Extending disk space allocated to store the blockchain.
 
@@ -23,7 +23,7 @@ The project doesn't intend to produce a setup optimized for mining.
 
 * Python
 * Ansible
-* Ansible's `hcloud` colletion: https://galaxy.ansible.com/hetzner/hcloud
+* Ansible's `hcloud` collection: https://galaxy.ansible.com/hetzner/hcloud
 * Ansible's `community.general` collection: https://galaxy.ansible.com/community/general
 
 You also need the appropriate API Keys for the VPS provider (Hetzner only,
