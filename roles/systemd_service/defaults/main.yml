@@ -4,9 +4,8 @@ limit_rate_up: "{{ lookup('env', 'LIMIT_RATE_UP') | default('', True) }}"
 limit_rate_down: "{{ lookup('env', 'LIMIT_RATE_DOWN') | default('', True) }}"
 out_peers: "{{ lookup('env', 'OUT_PEERS') | default('', True) }}"
 in_peers: "{{ lookup('env', 'IN_PEERS') | default('', True) }}"
-memory_high: "{{ lookup('env', 'MEMORY_HIGH') | default('1024M', True) }}"
 memory_max: "{{ lookup('env', 'MEMORY_MAX') | default('1536M', True) }}"
 monero_user_home: /home/monero
-
 ban_list_url: "{{ lookup('env', 'MONERO_BAN_LIST_URL') | default('', True) }}"
+
 services_dir: "/etc/systemd/system"
