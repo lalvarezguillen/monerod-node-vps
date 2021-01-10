@@ -1,0 +1,37 @@
+#! /bin/bash
+
+{{ monero_user_home }}/monerod \
+{% if network_flag %}
+    {{ network_flag }} \
+{% endif %}
+{% if pruned %}
+    --prune-blockchain \
+{% endif %}
+{% if ban_list_url %}
+    --ban-list={{ result_ban_list['dest'] }} \
+{% endif %}
+{% if enable_dns_blocklist %}
+    --enable-dns-blocklist \
+{% endif %}
+{% if public_rpc_port %}
+    --public-node \
+    --rpc-restricted-bind-port={{ public_rpc_port }} \
+    --rpc-restricted-bind-ip=0.0.0.0 \
+    --rpc-restricted-bind-ipv6-address=:: \
+{% endif %}
+{% if limit_rate_up %}
+    --limit-rate-up={{ limit_rate_up }} \
+{% endif %}
+{% if limit_rate_down %}
+    --limit-rate-down={{ limit_rate_down }} \
+{% endif %}
+{% if out_peers %}
+    --out-peers={{ out_peers }} \
+{% endif %}
+{% if in_peers %}
+    --in-peers={{ in_peers }} \
+{% endif %}
+    --sync-pruned-blocks \
+    --data-dir={{ result_create_blockchains_dir.path }} \
+    --non-interactive
+    

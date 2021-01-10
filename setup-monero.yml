@@ -1,0 +1,26 @@
+---
+- name: Setup monerod
+  hosts: all
+  gather_facts: False
+  user: root
+  vars:
+    # Empty NETWORK_FLAG means mainnet
+    - network_flag: "{{ lookup('env', 'NETWORK_FLAG') | default('', True) }}"
+    - monero_user_name: monero
+    - monero_volume_mountpoint: /mnt/monero
+    - hetzner_api_key: "{{ lookup('env', 'HETZNER_API_KEY') }}"
+    - public_ssh_key_name: "{{ lookup('env', 'PUBLIC_SSH_KEY_NAME') }}"
+    - public_ssh_key: "{{ lookup('env', 'PUBLIC_SSH_KEY') }}"
+  roles:
+    - role: hetzner_setup
+      vars:
+        hetzner_volume_mountpoint: "{{ monero_volume_mountpoint }}"
+    - monero_user
+    - network_dependent_vars
+    - firewall
+    - role: monerod_download
+      vars:
+        monero_user_home: "{{ result_user_creation.home }}"
+    - role: systemd_service
+      vars:
+        monero_user_home: "{{ result_user_creation.home }}"

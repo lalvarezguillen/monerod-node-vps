@@ -1,0 +1,51 @@
+- name: Create SSH keys
+  local_action:
+    module: hetzner.hcloud.hcloud_ssh_key
+    api_token: "{{ hetzner_api_key }}"
+    name: "{{ public_ssh_key_name }}"
+    public_key: "{{ public_ssh_key }}"
+    state: present
+
+- name: Create VPS
+  local_action:
+    module: hetzner.hcloud.hcloud_server
+    api_token: "{{ hetzner_api_key }}"
+    name: "{{ inventory_hostname_short }}"
+    location: "{{ hetzner_region }}"
+    server_type: "{{ hetzner_server_type }}"
+    image: "{{ hetzner_image }}"
+    ssh_keys:
+      - "{{ public_ssh_key_name }}"
+    state: started
+  register: result_create_vps
+
+- name: Register the ip address or the servers created
+  add_host:
+    hostname: "{{ inventory_hostname_short }}"
+    ansible_host: '{{ result_create_vps.hcloud_server.ipv4_address }}'
+  changed_when: False  # Otherwise this always reports "changed"
+
+- name: Attach a volume to hold the blockchain data
+  local_action:
+    module: hetzner.hcloud.hcloud_volume
+    api_token: "{{ hetzner_api_key }}"
+    name: "{{ inventory_hostname_short }}"
+    server: "{{ result_create_vps.hcloud_server.name }}"
+    state: present
+    size: "{{ hetzner_volume_gb_size | int }}"
+  register: result_attach_volume
+
+- name: Format and resize the volume if necessary
+  community.general.filesystem:
+    fstype: ext4
+    dev: "{{ result_attach_volume.hcloud_volume.linux_device }}"
+    state: present
+    resizefs: True
+
+- name: Mount the volume
+  mount:
+    src: "{{ result_attach_volume.hcloud_volume.linux_device }}"
+    state: mounted
+    fstype: ext4
+    path: "{{ hetzner_volume_mountpoint }}"
+    opts: 'discard,nofail,defaults'

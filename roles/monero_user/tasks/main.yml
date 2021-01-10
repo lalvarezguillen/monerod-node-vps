@@ -1,0 +1,5 @@
+---
+- name: Ensure monero_user_name exists
+  user:
+    name: "{{ monero_user_name }}"
+  register: result_user_creation

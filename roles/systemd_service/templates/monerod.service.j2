@@ -1,0 +1,16 @@
+[Unit]
+Description=Monero Mainnet Daemon
+StartLimitBurst=3
+StartLimitInterval=60s
+
+[Service]
+ExecStart={{ result_init_script['dest'] }}
+TimeoutSec=0
+RestartSec=2
+Restart=always
+MemoryAccounting=true
+MemoryMax={{ memory_max }}
+User={{ monero_user_name }}
+
+[Install]
+WantedBy=multi-user.target
