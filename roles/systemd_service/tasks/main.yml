@@ -1,8 +1,18 @@
 ---
+- name: create ban list
+  when: "ban_list_url"
+  get_url:
+    url: "{{ ban_list_url }}"
+    dest: "{{ monero_user_home }}/ban_list.txt"
+    group: "{{ monero_user_name }}"
+    owner: "{{ monero_user_name }}"
+    mode: "774"
+  register: result_ban_list
+
 - name: create init script
   template:
     src: start_monerod.sh.j2
-    dest: "{{ monero_volume_mountpoint }}/start_monerod.sh"
+    dest: "{{ monero_user_home }}/start_monerod.sh"
     group: "{{ monero_user_name }}"
     owner: "{{ monero_user_name }}"
     mode: "775"
@@ -12,16 +22,6 @@
   template:
     src: monerod.service.j2
     dest: "{{ services_dir }}/monerod.service"
-
-- name: create ban list
-  when: "ban_list"
-  get_url:
-    url: ban_list
-    dest: "{{ monero_volume_mountpoint }}/ban_list.txt"
-    group: "{{ monero_user_name }}"
-    owner: "{{ monero_user_name }}"
-    mode: "774"
-  register: result_ban_list
 
 - name: Restart service monerod
   systemd:

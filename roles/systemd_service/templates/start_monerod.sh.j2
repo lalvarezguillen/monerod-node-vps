@@ -1,13 +1,13 @@
 #! /bin/bash
 
-{{ result_user_creation.home }}/monerod \
+{{ monero_user_home }}/monerod \
 {% if network_flag %}
     {{ network_flag }} \
 {% endif %}
 {% if pruned %}
     --prune-blockchain \
 {% endif %}
-{% if ban_list %}
+{% if ban_list_url %}
     --ban-list={{ result_ban_list['dest'] }} \
 {% endif %}
 {% if enable_dns_blocklist %}

@@ -21,4 +21,6 @@
     - role: monerod_download
       vars:
         monero_user_home: "{{ result_user_creation.home }}"
-    - systemd_service
+    - role: systemd_service
+      vars:
+        monero_user_home: "{{ result_user_creation.home }}"
