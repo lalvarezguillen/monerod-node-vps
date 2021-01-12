@@ -34,6 +34,7 @@ for the time being), and public SSH key to setup in the server.
 * Extend to be able to setup nodes in other VPS providers, besides Hetzner
 * Extend to be able to create/maintain several nodes, across different
 clouds, with different configurations.
+* Tor setup.
 * Maybe include automated CI setup.
 
 ### Usage

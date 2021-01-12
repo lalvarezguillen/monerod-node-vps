@@ -2,6 +2,7 @@
 Description=Monero Mainnet Daemon
 StartLimitBurst=3
 StartLimitInterval=60s
+After=network.target
 
 [Service]
 ExecStart={{ result_init_script['dest'] }}
