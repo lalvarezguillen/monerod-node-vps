@@ -1,0 +1,2 @@
+# Empty network flag means mainnet
+network_flag: "{{ lookup('env', 'NETWORK_FLAG') | default('', True) }}"

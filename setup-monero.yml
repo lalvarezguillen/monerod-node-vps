@@ -4,8 +4,6 @@
   gather_facts: False
   user: root
   vars:
-    # Empty NETWORK_FLAG means mainnet
-    - network_flag: "{{ lookup('env', 'NETWORK_FLAG') | default('', True) }}"
     - monero_user_name: monero
     - monero_volume_mountpoint: /mnt/monero
     - hetzner_api_key: "{{ lookup('env', 'HETZNER_API_KEY') }}"

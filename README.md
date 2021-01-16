@@ -45,7 +45,7 @@ clouds, with different configurations.
     * `PUBLIC_SSH_KEY_NAME`
     * `PUBLIC_SSH_KEY`
 
-2. Run `ansible-playbook -i hosts setup-monero.yml`
+2. Run `ansible-playbook -i hosts.yml setup-monero.yml`
 
 That should create a public Monero mainnet node, running on the smallest Hetzner
 VPS, with a 50GB volume attached, and keeping a pruned blockchain. It'd expose
@@ -53,8 +53,8 @@ port 22 for ssh, port 18080 for p2p, and port 18089 for restricted RPC.
 
 The estimated cost of this setup is 3.01€/month, according to my Hetzner dashboard.
 
-Further configuration can be achieved via other environment variables. They're
-listed below
+Further configuration can be achieved via other environment variables (they're
+listed below), and through `hosts.yml` file (see `EXAMPLES.md` for reference)
 
 ### Environment variables reference
 
