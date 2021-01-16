@@ -1,3 +1,5 @@
+# Empty network flag means mainnet
+network_flag: "{{ lookup('env', 'NETWORK_FLAG') | default('', True) }}"
 pruned: "{{ lookup('env', 'PRUNED_NODE') | default(True, True) }}"
 enable_dns_blocklist: "{{ lookup('env', 'ENABLE_DNS_BLOCKLIST') | default(True, True) }}"
 limit_rate_up: "{{ lookup('env', 'LIMIT_RATE_UP') | default('', True) }}"

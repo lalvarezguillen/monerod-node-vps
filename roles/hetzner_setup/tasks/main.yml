@@ -21,9 +21,10 @@
 
 - name: Register the ip address or the servers created
   add_host:
-    hostname: "{{ inventory_hostname_short }}"
-    ansible_host: '{{ result_create_vps.hcloud_server.ipv4_address }}'
+    hostname: "{{ hostvars[item].inventory_hostname_short }}"
+    ansible_host: '{{ hostvars[item].result_create_vps.hcloud_server.ipv4_address }}'
   changed_when: False  # Otherwise this always reports "changed"
+  with_items: "{{ ansible_play_hosts }}"
 
 - name: Attach a volume to hold the blockchain data
   local_action:
