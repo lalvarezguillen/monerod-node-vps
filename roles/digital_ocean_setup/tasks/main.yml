@@ -1,0 +1,67 @@
+- name: Upload public SSH key
+  local_action:
+    module: digital_ocean_sshkey
+    oauth_token: "{{ do_api_key }}"
+    state: present
+    name: "{{ public_ssh_key_name }}"
+    ssh_pub_key: "{{ public_ssh_key }}"
+  register: result_upload_ssh_key
+
+- name: Create volume
+  local_action:
+    module: digital_ocean_block_storage
+    oauth_token: "{{ do_api_key }}"
+    command: create
+    state: present
+    region: "{{ do_region }}"
+    # Sadly, this doesn't resize the volume if necessary.
+    block_size: "{{ volume_gb_size }}"
+    volume_name: "{{ inventory_hostname_short }}"
+  register: result_create_volume
+
+
+- name: create a new droplet
+  local_action:
+    module: digital_ocean_droplet
+    state: present
+    name: "{{ inventory_hostname_short }}"
+    unique_name: true
+    oauth_token: "{{ do_api_key }}"
+    size: "{{ do_vps_type }}"
+    region: "{{ do_region }}"
+    image: "{{ do_vps_image }}"
+    wait_timeout: 500
+    ssh_keys:
+      - "{{ result_upload_ssh_key.data.ssh_key.id | int }}"
+  register: result_create_vps
+
+- name: Register the IP address of the servers created
+  add_host:
+    hostname: "{{ hostvars[item].inventory_hostname_short }}"
+    ansible_host: "{{ hostvars[item].result_create_vps.data.ip_address }}"
+  changed_when: false
+  with_items: "{{ ansible_play_hosts }}"
+
+
+- name: Attach block storage
+  local_action:
+    module: digital_ocean_block_storage
+    oauth_token: "{{ do_api_key }}"
+    state: present
+    command: attach
+    region: "{{ do_region }}"
+    volume_name: "{{ inventory_hostname_short }}"
+    droplet_id: "{{ result_create_vps.data.droplet.id }}"
+
+# Sadly, the attachment API call doesn't return the resulting Linux device name.
+# So we have to SSH in and fetch it. The device will have a symlink from a file
+# named like /dev/disk/by-id/scsi-0DO_Volume_<inventory_hostname_short>, so we
+# can ls grep for that, and send the result to readlink, to get the device name.
+- name: get linux device name
+  command: "/bin/bash -c 'readlink -f $(ls /dev/disk/by-id/* | grep {{ inventory_hostname_short }})'"
+  register: result_get_linux_device_name
+  changed_when: false
+
+- name: Export device name
+  set_fact:
+    device_name: "{{ result_get_linux_device_name.stdout_lines[0] }}"

@@ -36,17 +36,6 @@
     size: "{{ hetzner_volume_gb_size | int }}"
   register: result_attach_volume
 
-- name: Format and resize the volume if necessary
-  community.general.filesystem:
-    fstype: ext4
-    dev: "{{ result_attach_volume.hcloud_volume.linux_device }}"
-    state: present
-    resizefs: True
-
-- name: Mount the volume
-  mount:
-    src: "{{ result_attach_volume.hcloud_volume.linux_device }}"
-    state: mounted
-    fstype: ext4
-    path: "{{ hetzner_volume_mountpoint }}"
-    opts: 'discard,nofail,defaults'
+- name: Export device name
+  set_fact:
+    device_name: "{{ result_attach_volume.hcloud_volume.linux_device }}"

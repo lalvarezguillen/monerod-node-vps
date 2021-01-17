@@ -26,12 +26,12 @@ The project doesn't intend to produce a setup optimized for mining.
 * Ansible's `hcloud` collection: https://galaxy.ansible.com/hetzner/hcloud
 * Ansible's `community.general` collection: https://galaxy.ansible.com/community/general
 
-You also need the appropriate API Keys for the VPS provider (Hetzner only,
+You also need the appropriate API Keys for the VPS provider (Hetzner and DigitalOcean only,
 for the time being), and public SSH key to setup in the server.
 
 ### Long term goals
 
-* Extend to be able to setup nodes in other VPS providers, besides Hetzner
+* Extend to be able to setup nodes in other VPS providers, besides Hetzner and DigitalOcean
 * Extend to be able to create/maintain several nodes, across different
 clouds, with different configurations.
 * Tor setup.
@@ -42,24 +42,39 @@ clouds, with different configurations.
 1. Set up the following environment variables
 
     * `HETZNER_API_KEY`
+    * `DO_API_KEY`
     * `PUBLIC_SSH_KEY_NAME`
     * `PUBLIC_SSH_KEY`
 
-2. Run `ansible-playbook -i hosts.yml setup-monero.yml`
+2. Run
 
-That should create a public Monero mainnet node, running on the smallest Hetzner
-VPS, with a 50GB volume attached, and keeping a pruned blockchain. It'd expose
-port 22 for ssh, port 18080 for p2p, and port 18089 for restricted RPC.
+    * `ansible-playbook -i hosts.yml setup-hetzner-nodes.yml` to set up your nodes on Hetzner
+    * `ansible-playbook -i hosts.yml setup-do-nodes.yml` to set up your DigitalOcean nodes
 
-The estimated cost of this setup is 3.01€/month, according to my Hetzner dashboard.
+That should create:
+
+* A public Monero mainnet node
+* Running on the server type that has 1vcu and 2gb RAM
+* With a 50GB volume attached
+* Keeping a pruned blockchain
+* It'd expose port 22 for ssh, port 18080 for p2p, and port 18089 for restricted RPC
+
+The estimated cost of this setup is:
+
+* less than 6€/month for the Hetzner node
+* about 12€/month for the DigitalOcean node
+
 
 Further configuration can be achieved via other environment variables (they're
 listed below), and through `hosts.yml` file (see `EXAMPLES.md` for reference)
 
 ### Environment variables reference
 
-* `HETZNER_API_KEY`: Your API key for Hetzner. It's required. It should be an
-API key with read and write permissions.
+* `HETZNER_API_KEY`: Your API key for Hetzner. It's required to run the Hetzner playbook.
+It should be an API key with read and write permissions.
+
+* `DO_API_KEY`: Your API key for DigitalOcean. It's required to run the DigitalOcean playbook.
+It should be an API key with read and write permissions.
 
 * `PUBLIC_SSH_KEY_NAME`: A name for your public SSH key in Hetzner
 
@@ -84,6 +99,19 @@ Defaults to `cx11`, which is the smallest available. See Prices Section
 to `ubuntu-20.04`.
 
 * `HETZNER_VOLUME_GB_SIZE`: The size of he volume that will hold the blochain,
+expressed in gb. Defaults to `50`
+
+* `DO_REGION`: The DigitalOcean datacenter where the node should be created.
+Defaults to `nyc1`. See [this](https://www.digitalocean.com/docs/platform/availability-matrix/) for context
+
+* `DO_SERVER_TYPE`: The type of DigitalOcean droplet to create for the node.
+Defaults to `s-1vcpu-2gb`, which is the smallest available with 2gb RAM.
+See prices section [here](https://www.digitalocean.com/pricing/)
+
+* `DO_IMAGE`: The DigitalOcean machine image to use on the server. Defaults
+to `ubuntu-20-04-x64`
+
+* `DO_VOLUME_GB_SIZE`: The size of the volume that will hold the blockchain,
 expressed in gb. Defaults to `50`
 
 * `MONERO_DESIRED_VERSION`: The version of Monero that the node should be running.
@@ -116,6 +144,10 @@ Otherwise it gets restarted. Defaults to `1536M`. See `systemd`'s docs for
 * `MONERO_BAN_LIST_URL`: If provided, downloads a list of IPs of Monero nodes
 to ban. Defaults to empty.
 
+* `ANSIBLE_HOST_KEY_CHECKING`: Set to `False` to avoid having to manually confirm
+the authenticity of host ssh keys. See [this StackOverflow](https://stackoverflow.com/questions/32297456/how-to-ignore-ansible-ssh-authenticity-checking)
+thread for context
+
 ### Upgrading Monero Version
 
 The envvar `MONERO_DESIRED_VERSION` governs the version of Monero we want
@@ -131,7 +163,11 @@ downloading. This is provided on [Monero's website](https://www.getmonero.org/do
 ### Extending the volume allocated to store the blockchain
 
 Simply increasing `HETZNER_VOLUME_GB_SIZE` should take care of extending
-the volume and the filesystem.
+the volume and the filesystem, for nodes hosted on Hetzner.
+
+Right now this is not possible on DigitalOcean nodes. Because Ansible modules
+for that provider don't allow extending the size of existing volumes. I'll
+work on patching those modules, or crafting an alternative.
 
 ### Allocating more network resources
 
@@ -148,4 +184,7 @@ The setup suggested in that thread can be achived with:
 * `LIMIT_RATE_UP=92160`
 * `LIMIT_RATE_DOWN=92160`
 
-The extra traffic might generate additional costs though. Check Pricing section of https://www.hetzner.com/cloud
+The extra traffic might generate additional costs though. Check Pricing section of:
+
+* https://www.hetzner.com/cloud
+* https://www.digitalocean.com/docs/billing/bandwidth/
