@@ -2,4 +2,4 @@ hetzner_region: "{{ lookup('env', 'HETZNER_REGION') | default('fsn1', True) }}"
 hetzner_server_type: "{{ lookup('env', 'HETZNER_SERVER_TYPE') | default('cx11', True) }}"
 hetzner_image: "{{ lookup('env', 'HETZNER_IMAGE') | default('ubuntu-20.04', True) }}"
 hetzner_volume_gb_size: "{{ lookup('env', 'HETZNER_VOLUME_GB_SIZE') | default(50, True) }}"
-hetzner_volume_mountpoint: /mnt/monero
+volume_mountpoint: /mnt/monero

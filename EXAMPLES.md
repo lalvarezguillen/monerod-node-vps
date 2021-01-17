@@ -23,3 +23,16 @@ all:
           pruned: false
           hetzner_volume_gb_size: 30
 ```
+
+### Two nodes using default settings. One on Hetzner and one on DigitalOcean
+
+```yaml
+all:
+  children:
+    hetzner_nodes:
+      hosts:
+        hetznernode1:
+    digitalocean_nodes:
+      hosts:
+        donode1:
+```

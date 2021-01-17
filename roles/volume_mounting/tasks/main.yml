@@ -1,0 +1,14 @@
+- name: Format and resize the volume if necessary
+  community.general.filesystem:
+    fstype: ext4
+    dev: "{{ device_name }}"
+    state: present
+    resizefs: True
+
+- name: Mount the volume
+  mount:
+    src: "{{ device_name }}"
+    state: mounted
+    fstype: ext4
+    path: "{{ monero_volume_mountpoint }}"
+    opts: 'discard,nofail,defaults'

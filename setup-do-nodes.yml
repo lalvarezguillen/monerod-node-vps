@@ -1,18 +1,15 @@
 ---
-- name: Setup monerod
-  hosts: all
+- name: Setup Digital Ocean public Monero nodes
+  hosts: digitalocean_nodes
   gather_facts: False
   user: root
   vars:
-    - monero_user_name: monero
-    - monero_volume_mountpoint: /mnt/monero
-    - hetzner_api_key: "{{ lookup('env', 'HETZNER_API_KEY') }}"
+    - do_api_key: "{{ lookup('env', 'DO_API_KEY') }}"
     - public_ssh_key_name: "{{ lookup('env', 'PUBLIC_SSH_KEY_NAME') }}"
     - public_ssh_key: "{{ lookup('env', 'PUBLIC_SSH_KEY') }}"
   roles:
-    - role: hetzner_setup
-      vars:
-        hetzner_volume_mountpoint: "{{ monero_volume_mountpoint }}"
+    - digital_ocean_setup
+    - volume_mounting
     - monero_user
     - network_dependent_vars
     - firewall

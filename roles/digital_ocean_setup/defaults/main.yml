@@ -1,0 +1,4 @@
+volume_gb_size: "{{ lookup('env', 'DO_VOLUME_GB_SIZE') | default(50, True) }}"
+do_region: "{{ lookup('env', 'DO_REGION') | default('nyc1', True) }}"
+do_vps_type: "{{ lookup('env', 'DO_SERVER_TYPE') | default('s-1vcpu-2gb', True) }}"
+do_vps_image: "{{ lookup('env', 'DO_IMAGE') | default('ubuntu-20-04-x64', True) }}"
