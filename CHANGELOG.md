@@ -1,7 +1,7 @@
 ## v0.2.1
 
 - Allow running and maintaining nodes on DigitalOcean as well. The only caveat is
-that volumes can't be resize on DigitalOcean at this point in time.
+that volumes can't be resized on DigitalOcean at this point in time.
 
 ## v0.2.0
 
