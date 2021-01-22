@@ -37,7 +37,7 @@
 
 - name: Ensure blockchain dir exists
   file:
-    path: "{{ monero_volume_mountpoint }}/blockchain"
+    path: "{{ blockchain_dir }}/"
     state: directory
     owner: "{{ monero_user_name }}"
     group: "{{ monero_user_name }}"

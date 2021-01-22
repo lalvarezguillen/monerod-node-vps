@@ -1,21 +1,25 @@
 ---
-- name: Setup Digital Ocean public Monero nodes
-  hosts: digitalocean_nodes
+- name: Setup Monero Public Nodes
+  hosts: all
   gather_facts: False
   user: root
   vars:
     - do_api_key: "{{ lookup('env', 'DO_API_KEY') }}"
+    - hetzner_api_key: "{{ lookup('env', 'HETZNER_API_KEY') }}"
     - public_ssh_key_name: "{{ lookup('env', 'PUBLIC_SSH_KEY_NAME') }}"
     - public_ssh_key: "{{ lookup('env', 'PUBLIC_SSH_KEY') }}"
   roles:
     - digital_ocean_setup
-    - volume_mounting
+    - hetzner_setup
+    - role: volume_mounting
+      when: device_name and volume_mountpoint
     - monero_user
     - network_dependent_vars
     - firewall
     - role: monerod_download
       vars:
         monero_user_home: "{{ result_user_creation.home }}"
+        blockchain_dir: "{{ volume_mountpoint or result_user_creation.home }}/blockchain"
     - role: systemd_service
       vars:
         monero_user_home: "{{ result_user_creation.home }}"

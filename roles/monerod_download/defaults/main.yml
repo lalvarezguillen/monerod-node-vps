@@ -2,5 +2,5 @@ monero_desired_version: "{{ lookup('env', 'MONERO_DESIRED_VERSION') | default('v
 monero_download_url: "{{ lookup('env', 'MONERO_DOWNLOAD_URL') | default('https://downloads.getmonero.org/cli/linux64', True) }}"
 monero_download_checksum: "{{ lookup('env', 'MONERO_DOWNLOAD_CHECKSUM') | default('sha256:0fb6f53b7b9b3b205151c652b6c9ca7e735f80bfe78427d1061f042723ee6381', True) }}"
 
-monero_volume_mountpoint: /mnt/monero
+blockchain_dir: /mnt/monero/blockchain
 monero_user_home: /home/monero

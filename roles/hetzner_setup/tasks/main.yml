@@ -5,6 +5,7 @@
     name: "{{ public_ssh_key_name }}"
     public_key: "{{ public_ssh_key }}"
     state: present
+  when: "'hetzner_nodes' in group_names"
 
 - name: Create VPS
   local_action:
@@ -18,13 +19,19 @@
       - "{{ public_ssh_key_name }}"
     state: started
   register: result_create_vps
+  when: "'hetzner_nodes' in group_names"
 
-- name: Register the ip address or the servers created
+# This is a bit of a hack: we want to run the tasks of this role
+# only when we're dealing with a member of hetzner_nodes. But we
+# always want to run this "Register IP" task, because add_host
+# bypasses the host loop. See its documentation for context:
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/add_host_module.html
+- name: Register the ip address of the servers created
   add_host:
     hostname: "{{ hostvars[item].inventory_hostname_short }}"
     ansible_host: '{{ hostvars[item].result_create_vps.hcloud_server.ipv4_address }}'
   changed_when: False  # Otherwise this always reports "changed"
-  with_items: "{{ ansible_play_hosts }}"
+  with_items: "{{ groups['hetzner_nodes'] }}"
 
 - name: Attach a volume to hold the blockchain data
   local_action:
@@ -35,7 +42,14 @@
     state: present
     size: "{{ hetzner_volume_gb_size | int }}"
   register: result_attach_volume
+  when: "'hetzner_nodes' in group_names and volume_mountpoint"
 
 - name: Export device name
   set_fact:
     device_name: "{{ result_attach_volume.hcloud_volume.linux_device }}"
+  when: "'hetzner_nodes' in group_names and volume_mountpoint"
+
+- name: Export empty device name
+  set_fact:
+    device_name: ''
+  when: "'hetzner_nodes' in group_names and not volume_mountpoint"

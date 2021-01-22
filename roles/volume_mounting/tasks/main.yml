@@ -10,5 +10,5 @@
     src: "{{ device_name }}"
     state: mounted
     fstype: ext4
-    path: "{{ monero_volume_mountpoint }}"
+    path: "{{ volume_mountpoint }}"
     opts: 'discard,nofail,defaults'
