@@ -1,3 +1,9 @@
+## v0.2.2
+
+- Allow running and maintaining nodes on preexisting infrastructure. This
+would bypass all the server-creation logic, and go straight to configuring
+the preexisting server.
+
 ## v0.2.1
 
 - Allow running and maintaining nodes on DigitalOcean as well. The only caveat is
