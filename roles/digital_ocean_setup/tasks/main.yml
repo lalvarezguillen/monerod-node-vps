@@ -1,3 +1,5 @@
+# These tasks only run for the hosts in the digitalocean_nodes
+# group. With an exception documented below
 - name: Upload public SSH key
   local_action:
     module: digital_ocean_sshkey

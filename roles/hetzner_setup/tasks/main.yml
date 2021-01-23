@@ -1,3 +1,5 @@
+# These tasks only run for the hosts in the hetzner_nodes
+# group. With an exception documented below
 - name: Create SSH keys
   local_action:
     module: hetzner.hcloud.hcloud_ssh_key

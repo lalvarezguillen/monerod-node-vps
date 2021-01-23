@@ -1,8 +1,9 @@
-### Creates a public Monero node on a VPS
+### Ansible tool to create/manage public Monero nodes.
 
 The purpose of this project is to simplify the creation and maintenance
-of **public** Monero nodes on virtual private servers. Where maintenance
-involves the following tasks:
+of **public** Monero nodes; specially on virtual private servers, but in general
+on any linux machine where you have access. Where maintenance involves the
+following tasks:
 
 * Upgrading Monero version.
 * Enabling, disabling and updating flags passed to `monerod`.
@@ -11,7 +12,7 @@ involves the following tasks:
 The project aims to:
 
 * Be as simple as possible.
-* Produce a node that seeds the blockchain (public node).
+* By default, produce a node that seeds the blockchain (public node).
 * Produce a secure and stable setup.
 * Produce an inexpensive setup by default.
 * Make maintenance as easy as posible.
@@ -32,8 +33,6 @@ for the time being), and public SSH key to setup in the server.
 ### Long term goals
 
 * Extend to be able to setup nodes in other VPS providers, besides Hetzner and DigitalOcean
-* Extend to be able to create/maintain several nodes, across different
-clouds, with different configurations.
 * Tor setup.
 * Maybe include automated CI setup.
 
@@ -41,29 +40,24 @@ clouds, with different configurations.
 
 1. Set up the following environment variables
 
-    * `HETZNER_API_KEY`
-    * `DO_API_KEY`
+    * `HETZNER_API_KEY`, if you intend to create/manage nodes on Hetzner cloud (by default, this project attempts to create 1 node on Hetzner)
+    * `DO_API_KEY`, if you intend to create/manage nodes on DigitalOcean
     * `PUBLIC_SSH_KEY_NAME`
     * `PUBLIC_SSH_KEY`
 
 2. Run
 
-    * `ansible-playbook -i hosts.yml setup-hetzner-nodes.yml` to set up your nodes on Hetzner
-    * `ansible-playbook -i hosts.yml setup-do-nodes.yml` to set up your DigitalOcean nodes
+    * `ansible-playbook -i hosts.yml setup-nodes.yml` to set up your configured nodes
 
 That should create:
 
-* A public Monero mainnet node
-* Running on the server type that has 1vcu and 2gb RAM
+* 1 public Monero mainnet node, on Hetzner cloud.
+* Running on the smallest server type (cx11: 1vcpu, 2gb ram)
 * With a 50GB volume attached
 * Keeping a pruned blockchain
 * It'd expose port 22 for ssh, port 18080 for p2p, and port 18089 for restricted RPC
 
-The estimated cost of this setup is:
-
-* less than 6€/month for the Hetzner node
-* about 12€/month for the DigitalOcean node
-
+The estimated cost of this setup is less than 6€/month
 
 Further configuration can be achieved via other environment variables (they're
 listed below), and through `hosts.yml` file (see `EXAMPLES.md` for reference)
