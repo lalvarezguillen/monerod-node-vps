@@ -1,0 +1,12 @@
+volume_gb_size: "{{ lookup('env', 'VULTR_VOLUME_GB_SIZE') | default(50, True) }}"
+
+# Vultr only supports Block Storage volumes on NY/NJ region.
+vultr_region: "{{ lookup('env', 'VULTR_REGION') | default('New Jersey', True) }}"
+
+# The following should list VPS sizes/types offered by Vultr:
+# https://api.vultr.com/v1/plans/list
+vultr_vps_type: "{{ lookup('env', 'VULTR_SERVER_TYPE') | default('2048 MB RAM,55 GB SSD,2.00 TB BW', True) }}"
+
+# The following should list vps images offered by Vultr:
+# https://api.vultr.com/v1/os/list
+vultr_vps_image: "{{ lookup('env', 'VULTR_IMAGE') | default('Ubuntu 20.04 x64', True) }}"

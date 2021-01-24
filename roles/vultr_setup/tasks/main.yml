@@ -1,0 +1,81 @@
+# These tasks only run for the hosts in the vultr_nodes
+# group. With an exception documented below
+- name: Upload public SSH key
+  local_action:
+    module: ngine_io.vultr.vultr_ssh_key
+    api_key: "{{ vultr_api_key }}"
+    state: present
+    name: "{{ public_ssh_key_name }}"
+    ssh_key: "{{ public_ssh_key }}"
+  register: result_upload_ssh_key
+  when: "'vultr_nodes' in group_names"
+
+- name: create a new server
+  local_action:
+    module: ngine_io.vultr.vultr_server
+    api_key: "{{ vultr_api_key }}"
+    state: started
+    name: "{{ inventory_hostname_short }}"
+    plan: "{{ vultr_vps_type }}"
+    region: "{{ vultr_region }}"
+    os: "{{ vultr_vps_image }}"
+    ssh_keys:
+      - "{{ public_ssh_key_name }}"
+  register: result_create_vps
+  when: "'vultr_nodes' in group_names"
+
+# This is a bit of a hack: we want to run the tasks of this role
+# only when we're dealing with a member of vultr_nodes. But we
+# always want to run this "Register IP" task, because add_host
+# bypasses the host loop. See its documentation for context:
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/add_host_module.html
+- name: Register the IP address of the servers created
+  add_host:
+    hostname: "{{ hostvars[item].inventory_hostname_short }}"
+    ansible_host: "{{ hostvars[item].result_create_vps.vultr_server.v4_main_ip }}"
+  changed_when: false
+  with_items: "{{ groups['vultr_nodes'] }}"
+
+- name: Create and attach volume
+  local_action:
+    module: ngine_io.vultr.vultr_block_storage
+    api_key: "{{ vultr_api_key }}"
+    state: attached
+    region: "{{ vultr_region }}"
+    size: "{{ volume_gb_size }}"
+    name: "{{ inventory_hostname_short }}"
+    attached_to_id: "{{ result_create_vps.vultr_server.id | int }}"
+  register: result_create_volume
+  when: "'vultr_nodes' in group_names and volume_mountpoint"
+
+# Servers on Vultr need to be restarted if the volume attached is
+# resized. Otherwise the server doesn't make use of the new extra space
+- name: Restart server if volume size changed
+  local_action:
+    module: ngine_io.vultr.vultr_server
+    api_key: "{{ vultr_api_key }}"
+    state: restarted
+    name: "{{ inventory_hostname_short }}"
+  when: result_create_volume is changed
+
+# Sadly, the attachment API call doesn't return the resulting Linux device name.
+# So we have to SSH in and fetch it. The device will have a symlink from a file
+# named like /dev/disk/by-id/scsi-0DO_Volume_<SUBID>, so we can ls grep for that,
+# and send the result to readlink, to get the device name.
+- name: get linux device name
+  command: "/bin/bash -c 'readlink -f $(ls /dev/disk/by-id/* | grep {{ result_create_volume.vultr_block_storage.id }})'"
+  register: result_get_linux_device_name
+  changed_when: false
+  when: "'vultr_nodes' in group_names and volume_mountpoint"
+
+- name: Export device name
+  when: "'vultr_nodes' in group_names"
+  block:
+    - name: Export actual device name
+      set_fact:
+        device_name: "{{ result_get_linux_device_name.stdout_lines[0] }}"
+      when: volume_mountpoint
+    - name: Export empty device name
+      set_fact:
+        device_name: ''
+      when: not volume_mountpoint

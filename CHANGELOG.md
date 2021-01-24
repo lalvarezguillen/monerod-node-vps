@@ -1,3 +1,7 @@
+## v0.2.3
+
+- Allow running and maintaining nodes on Vultr
+
 ## v0.2.2
 
 - Allow running and maintaining nodes on preexisting infrastructure. This

@@ -26,13 +26,17 @@ The project doesn't intend to produce a setup optimized for mining.
 * Ansible
 * Ansible's `hcloud` collection: https://galaxy.ansible.com/hetzner/hcloud
 * Ansible's `community.general` collection: https://galaxy.ansible.com/community/general
+* Ansible's `ngine_io.vultr` [collection](https://github.com/ngine-io/ansible-collection-vultr).
+At the point of writing this, the last release of that collection doesn't support mounting volumes
+on servers, or resizing volumes. They've accepted [a patch I crafted](https://github.com/ngine-io/ansible-collection-vultr/commit/dcb398fccc8ba5b1ed0259e929e15b55c184e451) to include that functionality. So we
+need to install from their Github repo, referencing that patch: `ansible-galaxy collection install git+https://github.com/ngine-io/ansible-collection-vultr.git,dcb398fccc8ba5b1ed0259e929e15b55c184e451`
 
-You also need the appropriate API Keys for the VPS provider (Hetzner and DigitalOcean only,
+You also need the appropriate API Keys for the VPS provider (Hetzner, DigitalOcean and Vultr only,
 for the time being), and public SSH key to setup in the server.
 
 ### Long term goals
 
-* Extend to be able to setup nodes in other VPS providers, besides Hetzner and DigitalOcean
+* Extend to be able to setup nodes in other VPS providers, besides Hetzner, DigitalOcean and Vultr
 * Tor setup.
 * Maybe include automated CI setup.
 
@@ -42,6 +46,7 @@ for the time being), and public SSH key to setup in the server.
 
     * `HETZNER_API_KEY`, if you intend to create/manage nodes on Hetzner cloud (by default, this project attempts to create 1 node on Hetzner)
     * `DO_API_KEY`, if you intend to create/manage nodes on DigitalOcean
+    * `VULTR_API_KEY`, if you intend to create/manage nodes on Vultr
     * `PUBLIC_SSH_KEY_NAME`
     * `PUBLIC_SSH_KEY`
 
@@ -64,11 +69,16 @@ listed below), and through `hosts.yml` file (see `EXAMPLES.md` for reference)
 
 ### Environment variables reference
 
-* `HETZNER_API_KEY`: Your API key for Hetzner. It's required to run the Hetzner playbook.
+* `HETZNER_API_KEY`: Your API key for Hetzner. It's necessary if you configured
+the creation/maintenance of nodes on Hetzner cloud (which is the case, by default).
 It should be an API key with read and write permissions.
 
-* `DO_API_KEY`: Your API key for DigitalOcean. It's required to run the DigitalOcean playbook.
+* `DO_API_KEY`: Your API key for DigitalOcean. It's necessary if you configured
+the creation/maintenance of nodes on DigitalOcean cloud.
 It should be an API key with read and write permissions.
+
+* `VULTR_API_KEY`: Your API key for Vultr. It's necessary if you configured
+the creation/maintenance of nodes on Vultr cloud.
 
 * `PUBLIC_SSH_KEY_NAME`: A name for your public SSH key in Hetzner
 
@@ -106,6 +116,19 @@ See prices section [here](https://www.digitalocean.com/pricing/)
 to `ubuntu-20-04-x64`
 
 * `DO_VOLUME_GB_SIZE`: The size of the volume that will hold the blockchain,
+expressed in gb. Defaults to `50`
+
+* `VULTR_REGION`: The Vultr region where the node should be created. Defaults to
+`New Jersey`, because that's the only Vultr region that supports volumes.
+
+* `VULTR_SERVER_TYPE`: The type of Vultr server to create for the node. Defaults
+to `2048 MB RAM,55 GB SSD,2.00 TB BW`. Check the server types offered by Vultr
+[here](https://api.vultr.com/v1/plans/list)
+
+* `VULTR_IMAGE`: The Vultr machine image to use on the server. Defaults to
+`Ubuntu 20.04 x64`. Others available listed [here](https://api.vultr.com/v1/os/list)
+
+* `VULTR_VOLUME_GB_SIZE`: The size of the volume that will hold the blockchain,
 expressed in gb. Defaults to `50`
 
 * `MONERO_DESIRED_VERSION`: The version of Monero that the node should be running.
@@ -156,8 +179,9 @@ downloading. This is provided on [Monero's website](https://www.getmonero.org/do
 
 ### Extending the volume allocated to store the blockchain
 
-Simply increasing `HETZNER_VOLUME_GB_SIZE` should take care of extending
-the volume and the filesystem, for nodes hosted on Hetzner.
+Simply increasing `HETZNER_VOLUME_GB_SIZE` or `VULTR_VOLUME_GB_SIZE` should take
+care of extending the volume and the filesystem, for nodes hosted on Hetzner
+and Vultr, respectively.
 
 Right now this is not possible on DigitalOcean nodes. Because Ansible modules
 for that provider don't allow extending the size of existing volumes. I'll
@@ -182,3 +206,4 @@ The extra traffic might generate additional costs though. Check Pricing section 
 
 * https://www.hetzner.com/cloud
 * https://www.digitalocean.com/docs/billing/bandwidth/
+* https://www.vultr.com/resources/faq/#bandwidthoveragerate
