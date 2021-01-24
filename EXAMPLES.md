@@ -110,3 +110,22 @@ all:
           device_name: /dev/sda2
           volume_mountpoint: '/mnt/monero'
 ```
+
+### Two Hetzner Nodes on different Hetzner accounts (different API keys, of course)
+
+```yaml
+all:
+  children:
+    hetzner_nodes:
+      hosts:
+        hetznernode1:
+          hetzner_api_key: <the api key of my first account>
+        hetznernode2:
+          hetzner_api_key: <the api key of my second account>
+    digitalocean_nodes:
+      hosts:
+    vultr_nodes:
+      hosts:
+    preexisting_nodes:
+      hosts:
+```
