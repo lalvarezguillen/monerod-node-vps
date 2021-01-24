@@ -6,11 +6,13 @@
   vars:
     - do_api_key: "{{ lookup('env', 'DO_API_KEY') }}"
     - hetzner_api_key: "{{ lookup('env', 'HETZNER_API_KEY') }}"
+    - vultr_api_key: "{{ lookup('env', 'VULTR_API_KEY') }}"
     - public_ssh_key_name: "{{ lookup('env', 'PUBLIC_SSH_KEY_NAME') }}"
     - public_ssh_key: "{{ lookup('env', 'PUBLIC_SSH_KEY') }}"
   roles:
     - digital_ocean_setup
     - hetzner_setup
+    - vultr_setup
     - role: volume_mounting
       when: device_name and volume_mountpoint
     - monero_user

@@ -14,6 +14,8 @@ all:
         hetznernode1:
     digitalocean_nodes:
       hosts:
+    vultr_nodes:
+      hosts:
     preexisting_nodes:
       hosts:
 ```
@@ -32,6 +34,8 @@ all:
           hetzner_volume_gb_size: 30
     digitalocean_nodes:
       hosts:
+    vultr_nodes:
+      hosts:
     preexisting_nodes:
       hosts:
 ```
@@ -47,6 +51,8 @@ all:
     digitalocean_nodes:
       hosts:
         donode1:
+    vultr_nodes:
+      hosts:
     preexisting_nodes:
       hosts:
 ```
@@ -68,6 +74,8 @@ all:
     digitalocean_nodes:
       hosts:
         donode1:
+    vultr_nodes:
+      hosts:
     preexisting_nodes:
       hosts:
         grandmasbasement1:
@@ -90,6 +98,8 @@ all:
     digitalocean_nodes:
       hosts:
         donode1:
+    vultr_nodes:
+      hosts:
     preexisting_nodes:
       hosts:
         grandmasbasement1:
