@@ -28,8 +28,8 @@ The project doesn't intend to produce a setup optimized for mining.
 * Ansible's `community.general` collection: https://galaxy.ansible.com/community/general
 * Ansible's `ngine_io.vultr` [collection](https://github.com/ngine-io/ansible-collection-vultr).
 At the point of writing this, the last release of that collection doesn't support mounting volumes
-on servers. They've accepted [a patch I crafted](https://github.com/ngine-io/ansible-collection-vultr/commit/dcb398fccc8ba5b1ed0259e929e15b55c184e451) to include the functionality. So we
-need to install from their Github repo: `ansible-galaxy collection install git+https://github.com/ngine-io/ansible-collection-vultr.git,dcb398fccc8ba5b1ed0259e929e15b55c184e451`
+on servers, or resizing volumes. They've accepted [a patch I crafted](https://github.com/ngine-io/ansible-collection-vultr/commit/dcb398fccc8ba5b1ed0259e929e15b55c184e451) to include that functionality. So we
+need to install from their Github repo, referencing that patch: `ansible-galaxy collection install git+https://github.com/ngine-io/ansible-collection-vultr.git,dcb398fccc8ba5b1ed0259e929e15b55c184e451`
 
 You also need the appropriate API Keys for the VPS provider (Hetzner, DigitalOcean and Vultr only,
 for the time being), and public SSH key to setup in the server.
