@@ -48,6 +48,15 @@
   register: result_create_volume
   when: "'vultr_nodes' in group_names and volume_mountpoint"
 
+# Servers on Vultr need to be restarted if the volume attached is
+# resized. Otherwise the server doesn't make use of the new extra space
+- name: Restart server if volume size changed
+  local_action:
+    module: ngine_io.vultr.vultr_server
+    api_key: "{{ vultr_api_key }}"
+    state: restarted
+    name: "{{ inventory_hostname_short }}"
+  when: result_create_volume is changed
 
 # Sadly, the attachment API call doesn't return the resulting Linux device name.
 # So we have to SSH in and fetch it. The device will have a symlink from a file
