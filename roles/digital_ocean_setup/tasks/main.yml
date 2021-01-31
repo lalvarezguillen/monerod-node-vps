@@ -2,7 +2,7 @@
 # group. With an exception documented below
 - name: Upload public SSH key
   local_action:
-    module: digital_ocean_sshkey
+    module: community.digitalocean.digital_ocean_sshkey
     oauth_token: "{{ do_api_key }}"
     state: present
     name: "{{ public_ssh_key_name }}"
@@ -12,7 +12,7 @@
 
 - name: Create volume
   local_action:
-    module: digital_ocean_block_storage
+    module: community.digitalocean.digital_ocean_block_storage
     oauth_token: "{{ do_api_key }}"
     command: create
     state: present
@@ -26,7 +26,7 @@
 
 - name: create a new droplet
   local_action:
-    module: digital_ocean_droplet
+    module: community.digitalocean.digital_ocean_droplet
     state: present
     name: "{{ inventory_hostname_short }}"
     unique_name: true
@@ -54,7 +54,7 @@
 
 - name: Attach block storage
   local_action:
-    module: digital_ocean_block_storage
+    module: community.digitalocean.digital_ocean_block_storage
     oauth_token: "{{ do_api_key }}"
     state: present
     command: attach
@@ -62,6 +62,11 @@
     volume_name: "{{ inventory_hostname_short }}"
     droplet_id: "{{ result_create_vps.data.droplet.id }}"
   when: "'digitalocean_nodes' in group_names and volume_mountpoint"
+
+- name: wait for the server to be available
+  wait_for_connection:
+    sleep: 5
+    timeout: 300
 
 # Sadly, the attachment API call doesn't return the resulting Linux device name.
 # So we have to SSH in and fetch it. The device will have a symlink from a file

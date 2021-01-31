@@ -58,6 +58,11 @@
     name: "{{ inventory_hostname_short }}"
   when: result_create_volume is changed
 
+- name: wait for the server to be available
+  wait_for_connection:
+    sleep: 5
+    timeout: 300
+
 # Sadly, the attachment API call doesn't return the resulting Linux device name.
 # So we have to SSH in and fetch it. The device will have a symlink from a file
 # named like /dev/disk/by-id/scsi-0DO_Volume_<SUBID>, so we can ls grep for that,

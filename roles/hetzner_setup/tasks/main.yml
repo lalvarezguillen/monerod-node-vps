@@ -46,6 +46,11 @@
   register: result_attach_volume
   when: "'hetzner_nodes' in group_names and volume_mountpoint"
 
+- name: wait for the server to be available
+  wait_for_connection:
+    sleep: 5
+    timeout: 300
+
 - name: Export device name
   set_fact:
     device_name: "{{ result_attach_volume.hcloud_volume.linux_device }}"
