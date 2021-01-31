@@ -66,6 +66,7 @@
   wait_for_connection:
     sleep: 5
     timeout: 300
+  when: "'digitalocean_nodes' in group_names"
 
 # Sadly, the attachment API call doesn't return the resulting Linux device name.
 # So we have to SSH in and fetch it. The device will have a symlink from a file

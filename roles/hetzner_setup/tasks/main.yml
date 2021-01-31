@@ -50,6 +50,7 @@
   wait_for_connection:
     sleep: 5
     timeout: 300
+  when: "'hetzner_nodes' in group_names"
 
 - name: Export device name
   set_fact:
