@@ -17,7 +17,6 @@
     command: create
     state: present
     region: "{{ do_region }}"
-    # Sadly, this doesn't resize the volume if necessary.
     block_size: "{{ volume_gb_size }}"
     volume_name: "{{ inventory_hostname_short }}"
   register: result_create_volume
