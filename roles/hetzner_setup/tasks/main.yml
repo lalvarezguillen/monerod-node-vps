@@ -31,7 +31,9 @@
 - name: Register the ip address of the servers created
   add_host:
     hostname: "{{ hostvars[item].inventory_hostname_short }}"
-    ansible_host: '{{ hostvars[item].result_create_vps.hcloud_server.ipv4_address }}'
+    # We need to disregard servers that are not part of the run, which are the ones we didn't run
+    # "Create VPS" on. This allows us to run the playbook with --limit flag
+    ansible_host: '{{ hostvars[item].result_create_vps.hcloud_server.ipv4_address if "result_create_vps" in hostvars[item] else "" }}'
   changed_when: False  # Otherwise this always reports "changed"
   with_items: "{{ groups['hetzner_nodes'] }}"
 

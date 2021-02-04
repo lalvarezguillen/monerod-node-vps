@@ -12,11 +12,5 @@ collections:
     type: git
     version: d0710ba895b6cd21d02add95e74cb611ce8b1948
   
-  # At the point of writing this, the last release of the Vultr's collection doesn't
-  # support mounting volumes on servers, or resizing volumes. They've accepted
-  # a patch I crafted (https://github.com/ngine-io/ansible-collection-vultr/commit/dcb398fccc8ba5b1ed0259e929e15b55c184e451)
-  # to include that functionality. So we need to install from their Github repo,
-  # referencing that patch
-  - name: https://github.com/ngine-io/ansible-collection-vultr
-    type: git
-    version: dcb398fccc8ba5b1ed0259e929e15b55c184e451
+  - name: ngine_io.vultr
+    version: "1.1.0"

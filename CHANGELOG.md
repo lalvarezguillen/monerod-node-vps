@@ -2,6 +2,8 @@
 
 - Adapted to be able to resize DigitalOcean volumes
 - Consolidated Ansible requirements in `requirements.yml`
+- Adapted to be able to run `ansible-playbook` with `--limit` flag
+- Upgraded `ngine_io.vultr` to version `1.1.0`
 
 ## v0.2.3
 
