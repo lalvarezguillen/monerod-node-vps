@@ -32,7 +32,9 @@
 - name: Register the IP address of the servers created
   add_host:
     hostname: "{{ hostvars[item].inventory_hostname_short }}"
-    ansible_host: "{{ hostvars[item].result_create_vps.vultr_server.v4_main_ip }}"
+    # We need to disregard servers that are not part of the run, which are the ones we didn't run
+    # "Create VPS" on. This allows us to run the playbook with --limit flag
+    ansible_host: "{{ hostvars[item].result_create_vps.vultr_server.v4_main_ip if 'result_create_vps' in hostvars[item] else ''}}"
   changed_when: false
   with_items: "{{ groups['vultr_nodes'] }}"
 
@@ -57,6 +59,12 @@
     state: restarted
     name: "{{ inventory_hostname_short }}"
   when: result_create_volume is changed
+
+- name: wait for the server to be available
+  wait_for_connection:
+    sleep: 5
+    timeout: 300
+  when: "'vultr_nodes' in group_names"
 
 # Sadly, the attachment API call doesn't return the resulting Linux device name.
 # So we have to SSH in and fetch it. The device will have a symlink from a file

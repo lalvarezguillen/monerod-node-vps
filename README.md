@@ -24,12 +24,11 @@ The project doesn't intend to produce a setup optimized for mining.
 
 * Python
 * Ansible
-* Ansible's `hcloud` collection: https://galaxy.ansible.com/hetzner/hcloud
-* Ansible's `community.general` collection: https://galaxy.ansible.com/community/general
-* Ansible's `ngine_io.vultr` [collection](https://github.com/ngine-io/ansible-collection-vultr).
-At the point of writing this, the last release of that collection doesn't support mounting volumes
-on servers, or resizing volumes. They've accepted [a patch I crafted](https://github.com/ngine-io/ansible-collection-vultr/commit/dcb398fccc8ba5b1ed0259e929e15b55c184e451) to include that functionality. So we
-need to install from their Github repo, referencing that patch: `ansible-galaxy collection install git+https://github.com/ngine-io/ansible-collection-vultr.git,dcb398fccc8ba5b1ed0259e929e15b55c184e451`
+* Ansible collections defined in `requirements.yml`. Install with the following command:
+
+```
+ansible-galaxy install -r requirements.yml
+```
 
 You also need the appropriate API Keys for the VPS provider (Hetzner, DigitalOcean and Vultr only,
 for the time being), and public SSH key to setup in the server.
@@ -179,13 +178,8 @@ downloading. This is provided on [Monero's website](https://www.getmonero.org/do
 
 ### Extending the volume allocated to store the blockchain
 
-Simply increasing `HETZNER_VOLUME_GB_SIZE` or `VULTR_VOLUME_GB_SIZE` should take
-care of extending the volume and the filesystem, for nodes hosted on Hetzner
-and Vultr, respectively.
-
-Right now this is not possible on DigitalOcean nodes. Because Ansible modules
-for that provider don't allow extending the size of existing volumes. I'll
-work on patching those modules, or crafting an alternative.
+Simply increasing `HETZNER_VOLUME_GB_SIZE`, `VULTR_VOLUME_GB_SIZE` or
+`DO_VOLUME_GB_SIZE` should take care of extending the volume and the filesystem, for nodes hosted on Hetzner, Vultr and DigitalOcean, respectively.
 
 ### Allocating more network resources
 

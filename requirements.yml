@@ -1,0 +1,16 @@
+collections:
+  # Install a collection from Ansible Galaxy.
+  - name: hetzner.hcloud
+
+  - name: community.general
+
+  # At the point of writing this, the last release of the DigitalOcean collection
+  # doesn't support resizing volumes. I've proposed a patch that's waiting to be 
+  # merged (https://github.com/ansible-collections/community.digitalocean/pull/39).
+  # We can install referencing this patch to be able to get the feature.
+  - name: https://github.com/lalvarezguillen/community.digitalocean
+    type: git
+    version: d0710ba895b6cd21d02add95e74cb611ce8b1948
+  
+  - name: ngine_io.vultr
+    version: "1.1.0"
