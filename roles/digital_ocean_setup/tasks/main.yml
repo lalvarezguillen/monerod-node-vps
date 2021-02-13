@@ -52,6 +52,7 @@
     ansible_host: "{{ hostvars[item].result_create_vps.data.ip_address if 'result_create_vps' in hostvars[item] else '' }}"
   changed_when: false
   with_items: "{{ groups['digitalocean_nodes'] }}"
+  when: "'digitalocean_nodes' in group_names"
 
 - name: Attach block storage
   local_action:
