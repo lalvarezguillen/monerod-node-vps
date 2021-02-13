@@ -37,6 +37,7 @@
     ansible_host: "{{ hostvars[item].result_create_vps.vultr_server.v4_main_ip if 'result_create_vps' in hostvars[item] else ''}}"
   changed_when: false
   with_items: "{{ groups['vultr_nodes'] }}"
+  when: "'vultr_nodes' in group_names"
 
 - name: Create and attach volume
   local_action:
